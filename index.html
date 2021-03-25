@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="en" >
 
@@ -15,14 +17,14 @@
 <link rel="mask-icon" type="" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
 
 
-  <title>CodePen - 2125</title>
+  <title>CodePen - 2126</title>
   
   
   
   
 <style>
 #myCanvas{
-  background:"#cccccc";
+  background:#cccccc;
 }
 </style>
 
@@ -34,8 +36,12 @@
 </head>
 
 <body translate="no" >
-  a<div>
-  Bot Count: <span id="botCount">0</span> Deaths: <span id="deaths">0</span> Time: <span id="theTime">0</span>
+  <audio controls id="lazer"> 
+  <source src="https://math.seattleacademy.org/garyanderson/snd/laser_shot.wav" type="audio/wav">
+</audio>
+
+<div>
+  Bot Count: <span id="botCount">0</span> Deaths: <span id="deaths">0</span>
   <button id="resetBots">Reset Bots</button>
 </div>
 <canvas id="myCanvas" width="600" height="300"></canvas>
@@ -44,7 +50,7 @@
   
       <script id="rendered-js" >
 console.clear();
-let timer = 0;
+const lazersnd = document.getElementById("lazer");
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
 let bots = [];
@@ -67,7 +73,7 @@ function makeBot() {
 function doResetBots() {
   console.log("resetBots");
   bots = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     bot = makeBot();
     bots.push(bot);
   }
@@ -83,20 +89,12 @@ function drawBot(bot) {
   ctx.lineTo(x, y);
   ctx.stroke();
   if (bot.r == bots[0].r) {
-    ctx.fillStyle = "rgba(200,0,100,.2)";
+    ctx.fillStyle = "rgba(255,0,0,.5)";
     ctx.fill();
   }
-   if (bot.r == bots[1].r) {
-    ctx.fillStyle = "rgba(0,100,75,.2)";
-    ctx.fill();
-   }
-
 }
 
 function moveBot(bot) {
-  timer = timer + 1; 
-  let theTime = document.getElementById("theTime");
-  theTime.innerHTML = timer;
   bot.x = bot.x + bot.dx;
   bot.y = bot.y - bot.dy;
   if (bot.y - bot.r < 0) {
@@ -133,6 +131,7 @@ function checkCollide() {
         (bots[i].x - bots[j].x) ** 2 + (bots[i].y - bots[j].y) ** 2
       );
       if (d <= bots[i].r + bots[j].r) {
+        lazersnd.play();
         if (bots[i].r < bots[j].r) {
           bots[j].r = Math.sqrt(bots[i].r ** 2 + bots[j].r ** 2);
           bots[i].r = 0;
@@ -145,7 +144,6 @@ function checkCollide() {
     deaths = deathSpan.innerHTML * 1 + 1;
     deaths.innerHTML = deaths;
     doResetBots();
-    
   }
   for (i = bots.length - 1; i > 0; i--) {
     //console.log(i,bots[i].r);
@@ -153,57 +151,25 @@ function checkCollide() {
   }
 }
 setInterval(moveBots, 100);
-
-function dokeydown(e){
-  //console.log(e.key);
-  let stepSize = 2;
-  if(e.key=="ArrowUp"){
-    bots[0].dy = bots[0].dy + stepSize;
+function dokeydown(e) {
+  var stepSize = 2;
+  if (e.key == "ArrowRight") {
+    bots[0].dx += stepSize;
   }
-  
-  if(e.key=="ArrowRight"){
-    bots[0].dx = bots[0].dx + stepSize;
+  if (e.key == "ArrowLeft") {
+    bots[0].dx += -stepSize;
   }
-  
-  if(e.key=="ArrowDown"){
-    bots[0].dy = bots[0].dy - stepSize;
+  if (e.key == "ArrowUp") {
+    bots[0].dy += -stepSize;
   }
-  
-  if(e.key=="ArrowLeft"){
-    bots[0].dx = bots[0].dx - stepSize;
+  if (e.key == "ArrowDown") {
+    bots[0].dy += stepSize;
   }
-  
-  if(e.key==" "){
-    bots[0].dy = 0;
-    bots[0].dx = 0;
-    e.stopPropagation();
-  }
-  
-  
-  if(e.key=="w"){
-    bots[1].dy = bots[1].dy + stepSize;
-  }
-  
-  if(e.key=="d"){
-    bots[1].dx = bots[1].dx + stepSize;
-  }
-  
-  if(e.key=="s"){
-    bots[1].dy = bots[1].dy - stepSize;
-  }
-  
-  if(e.key=="a"){
-    bots[1].dx = bots[1].dx - stepSize;
-  }
-  
-  if(e.key==" "){
-    bots[1].dy = 0;
-    bots[1].dx = 0;
-    e.stopPropagation();
-  }
+  e.stopPropagation();
 }
-document.addEventListener("keydown",dokeydown);
-document.getElementById("resetBots").addEventListener("click", doResetBots);
+document.addEventListener("keydown", dokeydown);
+resetBots = document.getElementById("resetBots");
+resetBots.addEventListener("click", doResetBots, false);
     </script>
 
   
